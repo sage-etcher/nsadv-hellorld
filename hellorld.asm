@@ -12,6 +12,7 @@ LF      EQU     00AH            ;LINEFEED
         LXI     D,MSG           ;LOAD MESSAGE 
         CALL    PRINT           ;PRINT THE STRING
         CALL    RESTART         ;RETURN CONTROL TO NSDOS
+        HLT                     ;IF RESTART FAILS, HALT THE SYSTEM
 
 PRINT:  LDAX    D               ;GET CHARACTER AT DE
         CPI     NULL            ;CHECK IF CHARACTER IS NULL TERMINATOR
