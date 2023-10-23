@@ -1,0 +1,30 @@
+                COUT    EQU     0F80DH          ;GDOS CHAR OUT
+                RESTART EQU     0F828H          ;GDOS RESTART
+
+                CON0    EQU     000H            ;COUT SPECIFIER
+
+                NULL    EQU     000H            ;NULL CHAR/STR TERMINATOR
+                CR      EQU     00DH            ;CARTRIDGE RETURN
+                LF      EQU     00AH            ;LINEFEED
+
+                        ORG     00000H          ;TPA STARTS AT 0000
+
+0000  11 18 00          LXI     D,MSG           ;LOAD MESSAGE 
+0003  CD 0A 00          CALL    PRINT           ;PRINT THE STRING
+0006  CD 28 F8          CALL    RESTART         ;RETURN CONTROL TO NSDOS
+0009  C7                HLT                     ;IF RESTART FAILS, HALT
+
+000A  1A        PRINT:  LDAX    D               ;GET CHARACTER AT DE
+000B  FE 00             CPI     NULL            ;CHECK IF CHARACTER IS NULL TERMINATOR
+000D  C8                RZ                      ;IF IT IS, RETURN
+000E  47                MOV     B,A             ;OTHERWISE, PREPARE THE CHAR TO BE PRINTED
+000F  3E 00             MVI     A,CON0          ;SPECIFY COUT DEVICE
+0011  CD 0D F8          CALL    COUT            ;PRINT THE CHARACTER TO CONSOLE
+0014  13                INX     D               ;MOVE TO THE NEXT CHARACTER
+0015  C3 0A 00          JMP     PRINT           ;PRINT NEXT CHARACTER
+
+0018            MSG:    DB      'HELLORLD!',CR,LF,NULL
+0018  48 45 4C 4C 4F 52 4C 44 21 0D 0A 00
+
+                        END
+
