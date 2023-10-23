@@ -5,3 +5,5 @@ Poorly Filmed Video of it running can be found here :P
 <https://youtu.be/os8kyX2G1v0>
 
 Phone's camera is a potato, so sorry bout that-
+
+All 100% hand assembled
