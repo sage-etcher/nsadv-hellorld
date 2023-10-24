@@ -1,0 +1,94 @@
+
+                  LADDR   EQU     0C000H
+                          ORG     LADDR
+C000 C0                   DB      0C0H
+C001 --                   DS      9
+C002 --
+C003 --
+C004 --
+C005 --
+C006 --
+C007 --
+C008 --
+C009 --
+C00A C3 0D C0             JMP     START
+
+
+                  VID0    EQU     1000$0000B
+                  VID1    EQU     1000$0001B
+                  PROM    EQU     1000$0100B
+
+                  PAGE0   EQU     0A0H
+                  PAGE1   EQU     0A1H
+                  PAGE2   EQU     0A2H
+                  PAGE3   EQU     0A3H
+
+                  VDRIVER EQU     087FDH
+
+                  CLEARC  EQU     00FH
+                  CURONC  EQU     018H
+                  CUROFFC EQU     019H
+                  HOMEC   EQU     01EH
+
+                  NULL    EQU     000H
+
+C00D CD 1D C0     START:  CALL    MAPMEM
+C010 CD 33 C0             CALL    CUROFF
+C013 CD 3F C0             CALL    CLEAR
+C016 11 6B C0             LXI     D,MSG
+C019 CD 4A C0             CALL    PRINT
+C01C 76                   HLT
+
+C01D 3E 80        MAPMEM: MVI     A,VID0
+C01F D3 A0                OUT     PAGE0
+C021 3E 81                MVI     A,VID1
+C023 D3 A1                OUT     PAGE1
+C025 3E 84                MVI     A,PROM
+C027 D3 A2                OUT     PAGE2
+C029 C9                   RET
+
+C02A DD 21 5F C0  COUT:   MVI     IX,VBLOCK
+C02E CD FD 87             CALL    VDRIVER
+C031 C9                   RET
+
+C032 C9           RETURN: RET
+
+C033 3E 19        CUROFF: MVI     A,CUROFFC
+C035 CD 2A C0             CALL    COUT
+C038 C9                   RET
+
+C039 3E 18        CURON:  MVI     A,CURONC
+C03B CD 2A C0             CALL    COUT
+C03E C9                   RET
+
+C03F 3E 1E        CLEAR:  MVI     A,HOMEC
+C041 CD 2A C0             CALL    COUT
+C044 3E 0F                MVI     A,CLEARC
+C046 CD 2A C0             CALL    COUT
+C049 C9                   RET
+
+C04A 1A           PRINT:  LDAX    D
+C04B FE 00                CPI     NULL
+C04D C8                   RZ
+C04E CD 2A C0             CALL    COUT
+C051 13                   INX     D
+C052 C3 4A C0             JMP     PRINT
+
+C055              CTEMP:  DW      0FFFFH,0FFFFH,0FFFFH,0FFFFH,0FFFFH
+C055 FF FF FF FF FF FF FF FF FF FF
+
+C05F              VBLOCK:
+C05F 23           CURSX:  DB      35
+C060 7B           CURSY:  DB      123
+C061 61 85        PIXEL:  DW      08561H
+C063 00           SCRCT:  DB      000H
+C064 06 00        STATS:  DB      0000$0110B
+C066 32 C0        RETFP:  DW      RETURN
+C068 55 C0        PCTEMP: DW      CTEMP
+C06A 00           VMODE:  DB      000H
+
+C06B              MSG:    DB      'HELLORLD!',NULL
+C06B 48 45 4C 4C 4F 52 4C 44 21 00
+
+        END
+
