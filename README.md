@@ -1,10 +1,12 @@
-# nsadv-hellorld
+# nsadv-hellorld  
+
 hellorld written for the NorthStar Advantage  
-Seperate versions to run in NS-GDOS v1.0.0AQ and on the Bare Metal (no OS)
+Seperate versions to run in NS-GDOS v1.0.0AQ and on the Bare Metal (no OS)  
+As of October 24th 2023, the Bare Metal version is untested
 
-Poorly Filmed Video of it (NS-GDOS Example) running can be found here :P
-<https://youtu.be/os8kyX2G1v0>
+Poorly Filmed Video of it (NS-GDOS Example) running can be found here :P  
+<https://youtu.be/os8kyX2G1v0>  
 
-Phone's camera is a potato, so sorry bout that-
+Phone's camera is a potato, so sorry bout that-  
 
-All 100% hand assembled
+All 100% hand assembled  
