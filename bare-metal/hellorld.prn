@@ -1,94 +1,96 @@
+               ;SAGE I. HENDRICKS 2023 OCT 26
+               ;CLEARS THE SCREEN THEN PRINT HELLORLD AT HOME POS (TOP LEFT)
 
-                  LADDR   EQU     0C000H
-                          ORG     LADDR
-C000 C0                   DB      0C0H
-C001 --                   DS      9
-C002 --
-C003 --
-C004 --
-C005 --
-C006 --
-C007 --
-C008 --
-C009 --
-C00A C3 0D C0             JMP     START
+               ;MADE TO RUN ON CP/M V2.2
 
+               ;CONSTANTS
+               VID0    EQU     1000$0000B      ;VIDEO PART 1 (16K)
+               VID1    EQU     1000$0001B      ;VIDEO PART 2 (4X 4K)
+               PROM    EQU     1000$0100B      ;PROM (2K)
+               PAGE0   EQU     0A0H            ;00000-03FFFH
+               PAGE1   EQU     0A1H            ;04000-07FFFH
+               PAGE2   EQU     0A2H            ;08000-0BFFFH
 
-                  VID0    EQU     1000$0000B
-                  VID1    EQU     1000$0001B
-                  PROM    EQU     1000$0100B
+               SCANREG EQU     090H            ;VIDEO SCAN REG. TOP VISIBLE LINE
 
-                  PAGE0   EQU     0A0H
-                  PAGE1   EQU     0A1H
-                  PAGE2   EQU     0A2H
-                  PAGE3   EQU     0A3H
+               VBASE   EQU     08000H          ;BASE ADDR OF VIDEO DRIVER
+               VDRIVER EQU     VBASE+007FDH    ;VIDEO DRIVER JMP ADDR
+               VFONT   EQU     VBASE+00561H    ;STANDARD CHARACTER SET
 
-                  VDRIVER EQU     087FDH
+               NULL    EQU     000H            ;NULL BYTE
 
-                  CLEARC  EQU     00FH
-                  CURONC  EQU     018H
-                  CUROFFC EQU     019H
-                  HOMEC   EQU     01EH
+               CCLEAR  EQU     00FH            ;CLEAR SCREEN CHARACTER
+               CHOME   EQU     01EH            ;CURSOR HOME CHARACTER
+               CCUROFF EQU     019H            ;CURSOR OFF CHARACTER
 
-                  NULL    EQU     000H
+               ;CP/M START (VVV LARGE EXECUTABLE)
+0100                   ORG     00100H          ;CP/M'S TPA
+0100 C3 0D C0          JMP     START
 
-C00D CD 1D C0     START:  CALL    MAPMEM
-C010 CD 33 C0             CALL    CUROFF
-C013 CD 3F C0             CALL    CLEAR
-C016 11 6B C0             LXI     D,MSG
-C019 CD 4A C0             CALL    PRINT
-C01C 76                   HLT
+               ;PROM START (MUST BE ON SIDE 0 TRACK 0 SECT 4-7 OF FLOPPY)
+C000                   ORG     0C000H          ;PROM'S "TPA"
+C000 C0                DB      0C0H            ;FIRST BYTE TELLS THE PROM WHERE THE PROGRAM
+                                        ;SHOULD BE LOADED, IN MEM. C0 == C0000
+C00A                   ORG     0C00AH          ;PROM STARTS EXECUTING CODE 10 BYTES AFTER
+C00A C3 0D C0          JMP     START           ;THE SPECIFIED LOAD ADDR, IT EXPECTS A JUMP
 
-C01D 3E 80        MAPMEM: MVI     A,VID0
-C01F D3 A0                OUT     PAGE0
-C021 3E 81                MVI     A,VID1
-C023 D3 A1                OUT     PAGE1
-C025 3E 84                MVI     A,PROM
-C027 D3 A2                OUT     PAGE2
-C029 C9                   RET
+               ;PROGRAM START
+C00D CD 1A C0  START:  CALL    VSETUP          ;SETUP THE DISPLAY FOR THE VIDEO DRIVER
+C010 CD 2F C0          CALL    VCLEAR          ;CLEAR THE DISPLAY
+C013 11 65 C0          LXI     D,MSG           ;LOAD MESSAGE ADDR INTO DE
+C016 CD 43 C0          CALL    PRINT           ;PRINT LOADED MESSAGE FROM CURSOR POS
+C019 76                HLT                     ;HALT THE SYSTEM
 
-C02A DD 21 5F C0  COUT:   MVI     IX,VBLOCK
-C02E CD FD 87             CALL    VDRIVER
-C031 C9                   RET
+C01A 3E 80     VSETUP: MVI     A,VID0          ;SPECIFY VRAM PART 1
+C01C D3 A0             OUT     PAGE0           ;MAP TO PAGE 0
+C01E 3E 81             MVI     A,VID1          ;SPECIFY VRAM PART 2
+C020 D3 A1             OUT     PAGE1           ;MAP TO PAGE 1
+C022 3E 84             MVI     A,PROM          ;SPECIFY PROM (W/ VIDEO DRIVER)
+C024 D3 A2             OUT     PAGE2           ;MAP TO PAGE 2
+C026 C9                RET
 
-C032 C9           RETURN: RET
+C027 DD 21     COUT:   DB      0DDH,021H       ;MVI    IX,VBLOCK
+C029 5A C0             DW      VBLOCK
+C02B C3 FD 87          JMP     VDRIVER         ;GOTO VDRIVER
+C02E C9        RETURN: RET                     ;VDRIVER RETURNS HERE
 
-C033 3E 19        CUROFF: MVI     A,CUROFFC
-C035 CD 2A C0             CALL    COUT
-C038 C9                   RET
+C02F           VCLEAR:
+C02F 3E 19             MVI     A,CCUROFF       ;LOAD CURSOR OFF CHARACTER
+C031 CD 27 C0          CALL    COUT            ;TURN THE CURSOR OFF
+C034 3E 00             MVI     A,000H          ;SPECIFY TOP OF VRAM
+C036 D3 90             OUT     SCANREG         ;SET TOP LINE OFFSET TO 00
+C038 3E 1E             MVI     A,CHOME         ;LOAD HOME CHARACTER
+C03A CD 27 C0          CALL    COUT            ;GOTO THE HOME POSITION
+C03D 3E 0F             MVI     A,CCLEAR        ;LOAD CLEAR CHARACTER
+C03F CD 27 C0          CALL    COUT            ;CLEAR FROM CURSOR TO END OF SCREEN
+C042 C9                RET
 
-C039 3E 18        CURON:  MVI     A,CURONC
-C03B CD 2A C0             CALL    COUT
-C03E C9                   RET
+C043 1A        PRINT:  LDAX    D               ;LOAD CHARACTER FROM DE
+C044 FE 00             CPI     NULL            ;CHECK FOR NULL CHARACTER
+C046 C8                RZ                      ;IF NULL TERMINATOR IS REACHED, RETURN
+C047 D5                PUSH    D               ;SAVE DE
+C048 CD 27 C0          CALL    COUT            ;PRINT THE CHARACTER
+C04B D1                POP     D               ;RESTORE DE
+C04C 13                INX     D               ;MOVE TO NEXT CHARACTER
+C04D C3 43 C0          JMP     PRINT           ;REPEAT
 
-C03F 3E 1E        CLEAR:  MVI     A,HOMEC
-C041 CD 2A C0             CALL    COUT
-C044 3E 0F                MVI     A,CLEARC
-C046 CD 2A C0             CALL    COUT
-C049 C9                   RET
+               ;DATA BLOCK
+               ;VIDEO DRIVER DATA
+C050           VCUR:   DW      0FFFFH,0FFFFH,0FFFFH,0FFFFH,0FFFFH
+C050 FF FF FF FF FF FF FF FF FF FF
 
-C04A 1A           PRINT:  LDAX    D
-C04B FE 00                CPI     NULL
-C04D C8                   RZ
-C04E CD 2A C0             CALL    COUT
-C051 13                   INX     D
-C052 C3 4A C0             JMP     PRINT
+C05A           VBLCOK:
+C05A 00        CURSX:  DB      000H            ;CURSOR X POS
+C05B 00        CURSY:  DB      000H            ;CURSOR Y POS
+C05C 61 85     PIXEL:  DW      VFONT           ;USE THE STANDARD CHARACTER SET
+C05E 00        SCRCT:  DB      000H            ;TOP LINE OFFSET
+C05F 06        STATS:  DB      0000$0110B      ;NO-WRAP, NO-SCROLL
+C060 2E C0     RETFP:  DW      RETURN          ;VDRIVER JUMPS HERE AFTER DONE
+C062 50 C0     CTEMP:  DW      VCUR            ;CURSOR TO USE
+C064 00        VMODE:  DB      000H            ;DISPLAY MODE, 00 NORMAL, FF REVERSE
 
-C055              CTEMP:  DW      0FFFFH,0FFFFH,0FFFFH,0FFFFH,0FFFFH
-C055 FF FF FF FF FF FF FF FF FF FF
+               ;MESSAGE
+C065           MSG:    DB      'HELLORLD!',NULL
+C065 48 45 4C 4C 4f 52 4C 44 21 00
 
-C05F              VBLOCK:
-C05F 23           CURSX:  DB      35
-C060 7B           CURSY:  DB      123
-C061 61 85        PIXEL:  DW      08561H
-C063 00           SCRCT:  DB      000H
-C064 06 00        STATS:  DB      0000$0110B
-C066 32 C0        RETFP:  DW      RETURN
-C068 55 C0        PCTEMP: DW      CTEMP
-C06A 00           VMODE:  DB      000H
-
-C06B              MSG:    DB      'HELLORLD!',NULL
-C06B 48 45 4C 4C 4F 52 4C 44 21 00
-
-        END
-
+                       END

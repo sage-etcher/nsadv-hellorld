@@ -25,54 +25,55 @@ CCUROFF EQU     019H            ;CURSOR OFF CHARACTER
 
 ;CP/M START (VVV LARGE EXECUTABLE)
         ORG     00100H          ;CP/M'S TPA
-        JP      START
+        JMP     START
 
 ;PROM START (MUST BE ON SIDE 0 TRACK 0 SECT 4-7 OF FLOPPY)
         ORG     0C000H          ;PROM'S "TPA"
         DB      0C0H            ;FIRST BYTE TELLS THE PROM WHERE THE PROGRAM
                                 ;SHOULD BE LOADED, IN MEM. C0 == C0000
         ORG     0C00AH          ;PROM STARTS EXECUTING CODE 10 BYTES AFTER
-        JP      START           ;THE SPECIFIED LOAD ADDR, IT EXPECTS A JUMP
+        JMP     START           ;THE SPECIFIED LOAD ADDR, IT EXPECTS A JUMP
 
 ;PROGRAM START
 START:
         CALL    VSETUP          ;SETUP THE DISPLAY FOR THE VIDEO DRIVER
         CALL    VCLEAR          ;CLEAR THE DISPLAY
-        LD      DE,MSG          ;LOAD MESSAGE ADDR INTO DE
+        LXI     D,MSG           ;LOAD MESSAGE ADDR INTO DE
         CALL    PRINT           ;PRINT LOADED MESSAGE FROM CURSOR POS
         HLT                     ;HALT THE SYSTEM
 
-VSETUP: LD      A,VID0          ;SPECIFY VRAM PART 1
-        OUT     (PAGE0),A       ;MAP TO PAGE 0
-        LD      A,VID1          ;SPECIFY VRAM PART 2
-        OUT     (PAGE1),A       ;MAP TO PAGE 1
-        LD      A,PROM          ;SPECIFY PROM (W/ VIDEO DRIVER)
-        OUT     (PAGE2),A       ;MAP TO PAGE 2
+VSETUP: MVI     A,VID0          ;SPECIFY VRAM PART 1
+        OUT     PAGE0           ;MAP TO PAGE 0
+        MVI     A,VID1          ;SPECIFY VRAM PART 2
+        OUT     PAGE1           ;MAP TO PAGE 1
+        MVI     A,PROM          ;SPECIFY PROM (W/ VIDEO DRIVER)
+        OUT     PAGE2           ;MAP TO PAGE 2
         RET
 
-COUT:   LD		IX,VBLOCK
-        JP     VDRIVER          ;GOTO VDRIVER
+COUT:   DB      0DDH,021H       ;MVI    IX,VBLOCK
+        DW      VBLOCK
+        JMP     VDRIVER         ;GOTO VDRIVER
 RETURN: RET                     ;VDRIVER RETURNS HERE
 
 VCLEAR:
-        LD      A,CCUROFF       ;LOAD CURSOR OFF CHARACTER
+        MVI     A,CCUROFF       ;LOAD CURSOR OFF CHARACTER
         CALL    COUT            ;TURN THE CURSOR OFF
-        LD      A,000H          ;SPECIFY TOP OF VRAM
-        OUT     (SCANREG),A     ;SET TOP LINE OFFSET TO 00
-        LD      A,CHOME         ;LOAD HOME CHARACTER
+        MVI     A,000H          ;SPECIFY TOP OF VRAM
+        OUT     SCANREG         ;SET TOP LINE OFFSET TO 00
+        MVI     A,CHOME         ;LOAD HOME CHARACTER
         CALL    COUT            ;GOTO THE HOME POSITION
-        LD      A,CCLEAR        ;LOAD CLEAR CHARACTER
+        MVI     A,CCLEAR        ;LOAD CLEAR CHARACTER
         CALL    COUT            ;CLEAR FROM CURSOR TO END OF SCREEN
         RET
 
-PRINT:  LD      A,(DE)          ;LOAD CHARACTER FROM DE
-        CP      NULL            ;CHECK FOR NULL CHARACTER
-        RET     Z               ;IF NULL TERMINATOR IS REACHED, RETURN
-        PUSH    DE              ;SAVE DE
+PRINT:  LDAX    D               ;LOAD CHARACTER FROM DE
+        CPI     NULL            ;CHECK FOR NULL CHARACTER
+        RZ                      ;IF NULL TERMINATOR IS REACHED, RETURN
+        PUSH    D               ;SAVE DE
         CALL    COUT            ;PRINT THE CHARACTER
-        POP     DE              ;RESTORE DE
-        INC     DE              ;MOVE TO NEXT CHARACTER
-        JP      PRINT           ;REPEAT
+        POP     D               ;RESTORE DE
+        INX     D               ;MOVE TO NEXT CHARACTER
+        JMP     PRINT           ;REPEAT
 
 ;DATA BLOCK
 ;VIDEO DRIVER DATA

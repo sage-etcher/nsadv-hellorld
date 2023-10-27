@@ -1,23 +1,10 @@
-       0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
-C000  C0 -- -- -- -- -- -- -- -- -- C3 0D C0 CD 1D C0
-C010  CD 33 C0 CD 3F C0 11 6B C0 CD 4A C0 76 3E 80 D3
-C020  A0 3E 81 D3 A1 3E 84 D3 A2 C9 DD 21 5F C0 CD FD 
-C030  87 C9 C9 3E 19 CD 2A C0 C9 3E 18 CD 2A C0 C9 3E
-C040  1E CD 2A C0 3E 0F CD 2A C0 C9 1A FE 00 C8 CD 2A
-C050  C0 13 C3 4A C0 FF FF FF FF FF FF FF FF FF FF 23
-C060  7B 61 85 00 06 00 32 C0 55 C0 00 48 45 4C 4C 4F
-C070  52 4C 44 21 00
-
-
-
-
-C0 -- -- -- -- -- -- -- -- -- C3 0D C0 CD 1D C0
-CD 33 C0 CD 3F C0 11 6B C0 CD 4A C0 76 3E 80 D3
-A0 3E 81 D3 A1 3E 84 D3 A2 C9 DD 21 5F C0 CD FD 
-87 C9 C9 3E 19 CD 2A C0 C9 3E 18 CD 2A C0 C9 3E
-1E CD 2A C0 3E 0F CD 2A C0 C9 1A FE 00 C8 CD 2A
-C0 13 C3 4A C0 FF FF FF FF FF FF FF FF FF FF 23
-7B 61 85 00 06 00 32 C0 55 C0 00 48 45 4C 4C 4F
-52 4C 44 21 00
-
-
+       0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0123456789ABCDEF
+0100  C3 0D C0 -- -- -- -- -- -- -- -- -- -- -- -- --  ...-------------
+...   -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --  ----------------
+C000  C0 -- -- -- -- -- -- -- -- -- C3 0D C0 CD 1A C0  .---------......
+C010  CD 2F C0 11 65 C0 CD 43 C0 76 3E 80 D3 A0 3E 81  ./..e..C.v>...>.
+C020  D3 A1 3E 84 D3 A2 C9 DD 21 5A C0 C3 FD 87 C9 3E  ..>.....!Q.....>
+C030  19 CD 27 C0 3E 99 D3 90 3E 1E CD 27 C0 3E 0F CD  ..'.>...>..'.>..
+C040  27 C0 C9 1A FE 00 C8 D5 CD 27 C0 D1 13 C3 43 C0  '........'....C.
+C050  FF FF FF FF FF FF FF FF FF FF 00 00 61 85 00 06  ................
+C060  2E C0 50 C0 00 48 45 4C 4C 4F 52 4C 44 21 00 --  ..P..HELLORLD!.-
