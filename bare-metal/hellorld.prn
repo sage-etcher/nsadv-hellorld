@@ -24,8 +24,8 @@
                CCUROFF EQU     019H            ;CURSOR OFF CHARACTER
 
                ;CP/M START (VVV LARGE EXECUTABLE)
-0100                   ORG     00100H          ;CP/M'S TPA
-0100 C3 0D C0          JMP     START
+               ;       ORG     00100H          ;CP/M'S TPA
+               ;       JMP     START
 
                ;PROM START (MUST BE ON SIDE 0 TRACK 0 SECT 4-7 OF FLOPPY)
 C000                   ORG     0C000H          ;PROM'S "TPA"

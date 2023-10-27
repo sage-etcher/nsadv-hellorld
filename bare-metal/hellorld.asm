@@ -24,8 +24,8 @@ CHOME   EQU     01EH            ;CURSOR HOME CHARACTER
 CCUROFF EQU     019H            ;CURSOR OFF CHARACTER
 
 ;CP/M START (VVV LARGE EXECUTABLE)
-        ORG     00100H          ;CP/M'S TPA
-        JMP     START
+;       ORG     00100H          ;CP/M'S TPA
+;       JMP     START
 
 ;PROM START (MUST BE ON SIDE 0 TRACK 0 SECT 4-7 OF FLOPPY)
         ORG     0C000H          ;PROM'S "TPA"
