@@ -25,7 +25,7 @@ To start, the project has its files organized based on the directory
 
 ## CP/M Hellorld
 
-Arguably the easiest to write 'Hellorld' program, will run on just about any 8080 or Z80-based CP/M system. Doubled with the readily available text/context editor ED and ASM/LD, assembler and linker, the code practically writes itself!
+Arguably the easiest to write 'Hellorld' program, will run on just about any 8080 or Z80-based CP/M system. Doubled with the readily available text/context editor ED and ASM/LOAD, assembler and hex2com, the code practically writes itself!
 
 ## NorthStar GDOS Hellorld
 
