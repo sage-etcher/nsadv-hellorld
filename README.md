@@ -37,6 +37,8 @@ A poorly filmed video of this running can be found here :P
 <https://youtu.be/os8kyX2G1v0>  
 The phone's camera is a potato, so sorry bout that-  
 
+This code can also be found hosted over at Usagi Electric's collection of "Hellorld" programs on unique systems, found [here](https://github.com/Nakazoto/Hellorld/wiki/Microcomputers#northstar-advantage).
+
 ## Bare Metal Hellorld
 
 This was, for lack of better words, painful. The Advantage is a wonderful system, but, it lacks a character out procedure in the PROM. Instead, we are given a Standard Character Set and a Video Driver. With this, we can print characters to the screen, given a large bit of structuring and preparation. 
